@@ -25,8 +25,12 @@ ________________________________________
 -- H - 0x00FF
 -- h - 0x000F
 
+-- m - math lib
 -- q,t,_ - temporary
 -- N - nil/false
+
+m=math
+m.randomseed(7) --comment out if not needed
 
 P,I,F,R,M,S,U=512,0,0,{},{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
 for i=0,15 do R[i]=0 end --init registers
@@ -54,15 +58,17 @@ function s()
 		elseif(o==238)then --0xEE (RET)
 			P=S[#S] S[#S]=N
 		end
-	elseif(l<3)then  --IF 0xN000 is 1 or 2
+	elseif(l<3)then  -- 0xN000 is 1 or 2
 		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
-		P=o&4095 --opcode & 0xFFF
+		P=o --opcode & 0xFFF
+		--will be &0xFFF'd later
 	elseif(l<5) then --IF 0xN000 is 3 or 4
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
-		P=P+(R[X]==H and 2 or(l>3 and 2 or 0))
-	elseif(l<6)then --if 5xkk (SE Vx,Vy)
-		P=P+b(R[X]==R[Y])*2
+		P=P+b(l>3 and R[X]~=H or R[X]==H)*2
+	elseif(l<6 or l==9)then -- 5xxk (SE Vx,Vy) 9xxk (SNE Vx,Vy)
+		q,t=R[X],R[Y]
+		P=P+b(l>8 and q~=t or q==t)*2
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
 		R[X]=H
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
@@ -80,6 +86,13 @@ function s()
 			F,q=q&128>0,q<<1
 		end
 		R[X]=q&255
+	elseif(l<11)then --if 0xN000 is A
+		I=H|X
+	elseif(l<12)then --if 0xN000 is B
+		P=H|X+R[0]
+	elseif(l<13)then --if 0XN000 is C
+		R[X]=m.random(0,H)
 	end
+	P=P&4095
 end
 
