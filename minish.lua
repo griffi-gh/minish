@@ -16,7 +16,7 @@
 -- I - I REGISTER
 -- M - MEMORY
 -- S - STACK
---P,I,F,R,M,U=512,0,0,{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
+P,I,F,R,M,U=512,0,0,{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
 for i=0,15 do R[i]=0 end --init registers
 --memory is left uninited
 
@@ -24,8 +24,7 @@ for i=0,15 do R[i]=0 end --init registers
 D={}for i=0,31 do D[i]={}end
 
 --converts bool to num
---unused
---function b(v)return(v and 1 or 0)end
+function b(v)return(v and 1 or 0)end
 
 --MAIN LOOP
 function s()
@@ -57,11 +56,14 @@ function s()
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
 		R[X]=(R[X]+H)&255
 	elseif(l<9)then --if 0xN000 is 8
-		q,t=0,R[Y]
-		if(h<4)then --LD Vx,Vy
+		q,t=R[X],R[Y]
+		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
 			q=(h<1 and t or (h<2 and (q|t) or (h<3 and (q&t) or (q~t))))
+		elseif(h<6)then --ADD Vx,Vy; SUB Vx,Vy
+			q=h>4 and q-t or q+t
+			F=(h>4 and b(q>=0) or b(q>255))
 		end
-		R[X]=q
+		R[X]=q&255
 	end
 end
 
