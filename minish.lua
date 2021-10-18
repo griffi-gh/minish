@@ -6,11 +6,15 @@
 -- I - I REGISTER
 -- M - MEMORY
 -- S - STACK
-U={240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
-P,I,F,R,M=512,0,0,{},{}for i=0,15 do R[i]=0 end
-for i=0,4095 do M[i]=0 end
+P,I,F,R,M,U=512,0,0,{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
+for i=0,4095 do R[i&15]=0 M[i]=0 end --init registers and memory
 --DISPLAY
 D={}for i=0,31 do D[i]={}end
+
+--converts bool to num
+--unused
+--function b(v)return(v and 1 or 0)end
+
 --MAIN LOOP
 function s()
 	o=M[P] --fetch
@@ -18,7 +22,8 @@ function s()
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
 	Y=(o&240)>>4     --0x00F0
-	H=o&255
+	H=o&255 --0x00FF
+	h=o&15  --0x000F
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0; CLS
 			for i=0,31 do D[i]={}end
@@ -30,12 +35,9 @@ function s()
 		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
 		P=o&4095 --opcode & 0xFFF
 	elseif(l<5) then --IF 0xN000 is 3 or 4
+		--3xkk (SE Vx,byte)
+		--4xkk (SNE Vx,byte)
 		P=P+(R[X]==H and 2 or (l>3 and 2 or 0))
-		--[[if(R[X]==H)then --if 3xkk (SE Vx,byte)
-			P=P+2
-		elseif(l>3)then --if 4xkk (SNE)
-			P=P+2
-		end]]
 	elseif(l<6)then --if 5xkk (SE Vx,Vy)
 		if(R[X]==R[Y])then P=P+2 end
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
@@ -43,5 +45,7 @@ function s()
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
 		R[x]=(R[x]+H)&255
 	elseif(l<9)then --if 0xN000 is 8
+
+	end
 end
 
