@@ -59,9 +59,13 @@ function s()
 		q,t=R[X],R[Y]
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
 			q=(h<1 and t or (h<2 and (q|t) or (h<3 and (q&t) or (q~t))))
-		elseif(h<6)then --ADD Vx,Vy; SUB Vx,Vy
-			q=h>4 and q-t or q+t
+		elseif(h<6 or h==7)then --ADD Vx,Vy; SUB Vx,Vy; SUBN Vx,Vy
+			q=h>4 and (h>6 and t-q or q-t) or q+t
 			F=(h>4 and b(q>=0) or b(q>255))
+		elseif(h<7)then --SHR Vx
+			F,q=q&1>0,q>>1
+		elseif(h==14)then --0xE SHL Vx
+			F,q=q&128>0,q<<1
 		end
 		R[X]=q&255
 	end
