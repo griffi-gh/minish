@@ -41,7 +41,7 @@ function b(v)return(v and 1 or 0)end
 --MAIN LOOP
 function s()
 	o=M[P] or 0--fetch
-	print(o,P) --uncomment for debug
+	--print(o,P) --uncomment for debug
 	P=P+2 --next instr
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
@@ -60,7 +60,7 @@ function s()
 	elseif(l<5) then --IF 0xN000 is 3 or 4
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
-		P=P+(R[X]==H and 2 or (l>3 and 2 or 0))
+		P=P+(R[X]==H and 2 or(l>3 and 2 or 0))
 	elseif(l<6)then --if 5xkk (SE Vx,Vy)
 		P=P+b(R[X]==R[Y])*2
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
@@ -70,7 +70,7 @@ function s()
 	elseif(l<9)then --if 0xN000 is 8
 		q,t=R[X],R[Y]
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
-			q=(h<1 and t or (h<2 and (q|t) or (h<3 and (q&t) or (q~t))))
+			q=(h<1 and t or (h<2 and(q|t)or(h<3 and(q&t)or(q~t))))
 		elseif(h<6 or h==7)then --ADD Vx,Vy; SUB Vx,Vy; SUBN Vx,Vy
 			q=h>4 and (h>6 and t-q or q-t) or q+t
 			F=(h>4 and b(q>=0) or b(q>255))
