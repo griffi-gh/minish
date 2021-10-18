@@ -17,17 +17,18 @@ ________________________________________
 -- M - MEMORY
 -- S - STACK
 -- D - DISPLAY
-
 -- o - Current instr
 -- l - 0xF000
 -- X - 0x0F00
 -- Y - 0x00F0
 -- H - 0x00FF
 -- h - 0x000F
-
 -- m - math lib
--- q,t,_ - temporary
 -- N - nil/false
+-- b - converts bool to num
+-- s - main loop
+-- d - draw flag
+-- q,t,_,z,Z,x,y - temporary
 
 m=math
 m.randomseed(7) --comment out if not needed
@@ -55,11 +56,13 @@ function s()
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
 			for i=0,31 do D[i]={}end
+			d=1
 		elseif(o==238)then --0xEE (RET)
 			P=S[#S] S[#S]=N
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
 		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
+		S[#S+1]=(l>1)and(P)or(N)
 		P=o --opcode & 0xFFF
 		--will be &0xFFF'd later
 	elseif(l<5) then --IF 0xN000 is 3 or 4
@@ -74,7 +77,7 @@ function s()
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
 		R[X]=(R[X]+H)&255
 	elseif(l<9)then --if 0xN000 is 8
-		q,t=R[X],R[Y]
+		q=R[X]t=R[Y]
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
 			q=(h<1 and t or (h<2 and(q|t)or(h<3 and(q&t)or(q~t))))
 		elseif(h<6 or h==7)then --ADD Vx,Vy; SUB Vx,Vy; SUBN Vx,Vy
@@ -92,6 +95,19 @@ function s()
 		P=H|X+R[0]
 	elseif(l<13)then --if 0XN000 is C
 		R[X]=m.random(0,H)
+	elseif(l<14)then --if 0xN000 is D (DRW Vx,Vy,nibble)
+		x=R[X]y=R[Y]d,F=1,0
+		for i=0,h-1 do
+			q = M[I+i]
+			for j=0,7 do
+				if(q&(128>>j)>0)then
+					z,Z=x+j,y+i
+					_=D[Z][z]
+					F=F|b(_)
+					D[Z][z]=not(_)
+				end
+			end
+		end
 	end
 	P=P&4095
 end
