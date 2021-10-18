@@ -5,8 +5,7 @@
 		 | |  | |_| |_| |\  |_| |_ ____) | |  | |
 		 |_|  |_|_____|_| \_|_____|_____/|_|  |_|
 
-					smol chip-8 interpreter
-						[[by >griffi-gh]]
+				  [[smol chip-8 interpreter]]
 
 -- N - NIL
 -- U - FONT
@@ -45,7 +44,7 @@ function s()
 	X=(o&3840)>>8    --0x0F00
 	Y=(o&240)>>4     --0x00F0
 	h=o&15 			  --0x000F
-	H=h|Y --0x00FF
+	H=h|Y 			  --0x00FF
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
 			for i=0,31 do D[i]={}end
