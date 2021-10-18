@@ -50,7 +50,7 @@ function s()
 		--4xkk (SNE Vx,byte)
 		P=P+(R[X]==H and 2 or (l>3 and 2 or 0))
 	elseif(l<6)then --if 5xkk (SE Vx,Vy)
-		if(R[X]==R[Y])then P=P+2 end
+		P=P+b(R[X]==R[Y])*2
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
 		R[X]=H
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
