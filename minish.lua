@@ -30,17 +30,18 @@ function s()
 		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
 		P=o&4095 --opcode & 0xFFF
 	elseif(l<5) then --IF 0xN000 is 3 or 4
-		if(R[X]==H)then --if 3xkk SE
+		P=P+(R[X]==H and 2 or (l>3 and 2 or 0))
+		--[[if(R[X]==H)then --if 3xkk (SE Vx,byte)
 			P=P+2
-		elseif(l>3)then --if 4xkk SNE
+		elseif(l>3)then --if 4xkk (SNE)
 			P=P+2
-		end
-	elseif(l<6)then --if 5xkk SE Vx,Vy
+		end]]
+	elseif(l<6)then --if 5xkk (SE Vx,Vy)
 		if(R[X]==R[Y])then P=P+2 end
-	elseif(l<7)then --if 0xN000 is 6 (LD vX,byte)
+	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
 		R[X]=H
-	elseif(l<8)then --if 0xN000 is 7
-
-	end
+	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
+		R[x]=(R[x]+H)&255
+	elseif(l<9)then --if 0xN000 is 8
 end
 
