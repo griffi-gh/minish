@@ -1,3 +1,13 @@
+--[[	  __  __ _____ _   _ _____  _____ _    _
+		 |  \/  |_   _| \ | |_   _|/ ____| |  | |
+		 | \  / | | | |  \| | | | | (___ | |__| |
+		 | |\/| | | | | . ` | | |  \___ \|  __  |
+		 | |  | |_| |_| |\  |_| |_ ____) | |  | |
+		 |_|  |_|_____|_| \_|_____|_____/|_|  |_|
+
+					smol chip-8 interpreter
+						[[by >griffi-gh]]
+
 -- N - NIL
 -- U - FONT
 -- F - FLAG
@@ -31,8 +41,7 @@ function s()
 		if(o==224)then --0x00E0 (CLS)
 			for i=0,31 do D[i]={}end
 		elseif(o==238)then --0xEE (RET)
-			P=S[#S]
-			S[#S]=N
+			P=S[#S] S[#S]=N
 		end
 	elseif(l<3)then --if 0xN000 is 1 or 2
 		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
@@ -46,9 +55,13 @@ function s()
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
 		R[X]=H
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
-		R[x]=(R[x]+H)&255
+		R[X]=(R[X]+H)&255
 	elseif(l<9)then --if 0xN000 is 8
-
+		q,t=0,R[Y]
+		if(h<4)then --LD Vx,Vy
+			q=(h<1 and t or (h<2 and (q|t) or (h<3 and (q&t) or (q~t))))
+		end
+		R[X]=q
 	end
 end
 
