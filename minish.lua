@@ -29,6 +29,7 @@ ________________________________________
 -- M - MEMORY
 -- S - STACK
 -- D - DISPLAY
+-- C - DELAY TIMER
 -- o - Current instr
 -- r - OP & 0x0FFF
 -- l - OP & 0xF000
@@ -42,10 +43,9 @@ ________________________________________
 -- s - main loop
 -- d - draw flag
 -- q,t,_,z,Z,x,y,i,g - temporary
-W,J,V,j,w=128,144,32,240,16
-m,P,I,F,R,M,S,K,U=math,512,0,0,{},{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,64,64,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,224,J,224,J,224,j,W,W,W,j,224,J,J,J,224,j,W,j,W,j,j,W,j,W,W}
+W,J,V,j,w,Q,E=128,144,32,240,16,15,255
+m,C,P,I,F,R,M,S,K,U=math,0,512,0,0,{},{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,64,64,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,224,J,224,J,224,j,W,W,W,j,224,J,J,J,224,j,W,j,W,j,j,W,j,W,W}
 m.randomseed(7) --comment out if not needed
-Q,E=15,255
 for i=0,Q do R[i]=0 end --init registers
 --memory is left uninited
 
@@ -57,15 +57,16 @@ function b(v)return(v and 1 or 0)end
 
 --MAIN LOOP
 function s()
+	C=m.max(C-1,0)
 	o=(M[P+1]or 0)|(M[P]or 0)<<8 --fetch
 	--print(string.format("OP: %04X",o),string.format("PC: %03X",P)) --uncomment for basic debug
-	P=P+2 --next instr
-	l=(o&0xF000)>>12 --0xF000 >>
-	X=(o&3840)>>8    --0x0F00 >>
+	X=(M[P]&Q)    	  --0x0F00 >>
+	l=(M[P]&j)>>4    --0xF000 >>
 	Y=(o&j)>>4       --0x00F0 >>
 	h=o&Q 			  --0x000F
+	r=o&4095 	     --0x0FFF
 	H=o&E 			  --0x00FF
-	r=H|(o&3840)	  --0x0FFF
+	P=P+2 			  --next instr
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
 			for i=0,31 do D[i]={}end
@@ -122,9 +123,11 @@ function s()
 			end
 		end
 	elseif(l<Q) then --if 0xN000 is E
-		if(H==158 or H==161)then --0x9e or 0xa1
-			P=P+(b(K[R[X]])~b(H>160))*2
-		end
+		--SKP Vx and SKNP Vx
+		P=P+(b(K[R[X]])~b(H>160))*b(H==158 or H==161)*2
+	else --if 0xN000 is F
+		if(H==Q)then
+		else
 	end
 	P=P&4095
 end
