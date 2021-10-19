@@ -99,7 +99,7 @@ function s()
 		elseif(h<7)then --SHR Vx
 			F,q=q&1>0,q>>1
 		elseif(h==14)then --0xE SHL Vx
-			F,q=q&W>0,q<<1
+			F,q=q&W>0,q*2
 		end
 		R[X]=q&E
 	elseif(l<11)then --if 0xN000 is A
