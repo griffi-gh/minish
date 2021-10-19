@@ -83,7 +83,7 @@ function s()
 		S[#S+1]=(l>1)and(P)or(N) --If 2nnn (CALL)
 		P=o --opcode & 0xFFF
 		--will be &0xFFF'd later
-	elseif(l<5) then --IF 0xN000 is 3 or 4
+	elseif(l<5)then --IF 0xN000 is 3 or 4
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
 		P=P+(l>3 and b(x~=H) or b(x==H))*2
