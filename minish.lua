@@ -57,7 +57,7 @@ function b(v)return(v and 1 or 0)end
 --MAIN LOOP
 function s()
 	o=(M[P+1]or 0)|(M[P]or 0)<<8 --fetch
-	--print(o,P) --uncomment for basic debug
+	--print(string.format("OP: %04X",o),string.format("PC: %03X",P)) --uncomment for basic debug
 	P=P+2 --next instr
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
