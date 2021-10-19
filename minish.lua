@@ -15,6 +15,11 @@ ________________________________________
 -- VARIABLES
 -- Q - const 0xF
 -- E - const 0xFF
+-- W - const 0x80
+-- J - const 144
+-- j - const 240
+-- V - const 32
+-- w - const 16
 -- K - keyboard
 -- U - FONT
 -- F - FLAG
@@ -35,9 +40,9 @@ ________________________________________
 -- b - converts bool to num
 -- s - main loop
 -- d - draw flag
--- q,t,_,z,Z,x,y - temporary
-
-m,P,I,F,R,M,S,K,U=math,512,0,0,{},{},{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
+-- q,t,_,z,Z,x,y,i,g - temporary
+W,J,V,j,w=128,144,32,240,16
+m,P,I,F,R,M,S,K,U=math,512,0,0,{},{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,64,64,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,224,J,224,J,224,j,W,W,W,j,224,J,J,J,224,j,W,j,W,j,j,W,j,W,W}
 m.randomseed(7) --comment out if not needed
 Q,E=15,255
 for i=0,Q do R[i]=0 end --init registers
@@ -56,7 +61,7 @@ function s()
 	P=P+2 --next instr
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
-	Y=(o&240)>>4     --0x00F0
+	Y=(o&j)>>4       --0x00F0
 	h=o&Q 			  --0x000F
 	H=h|Y 			  --0x00FF
 	if(l<1)then -- if 0xN000 is 0
@@ -91,7 +96,7 @@ function s()
 		elseif(h<7)then --SHR Vx
 			F,q=q&1>0,q>>1
 		elseif(h==14)then --0xE SHL Vx
-			F,q=q&128>0,q<<1
+			F,q=q&W>0,q<<1
 		end
 		R[X]=q&E
 	elseif(l<11)then --if 0xN000 is A
@@ -104,9 +109,9 @@ function s()
 		x=R[X]y=R[Y]d,F=1,0
 		for i=0,h-1 do
 			q = M[I+i]
-			for j=0,7 do
-				if(q&(128>>j)>0)then
-					z,Z=x+j,y+i
+			for g=0,7 do
+				if(q&(W>>g)>0)then
+					z,Z=x+g,y+i
 					_=D[Z][z]
 					F=F|b(_)
 					D[Z][z]=not(_)
