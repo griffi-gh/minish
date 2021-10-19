@@ -57,7 +57,7 @@ function b(v)return(v and 1 or 0)end
 --MAIN LOOP
 function s()
 	o=(M[P+1]or 0)|(M[P]or 0)<<8 --fetch
-	--print(o,P) --uncomment for debug
+	--print(o,P) --uncomment for basic debug
 	P=P+2 --next instr
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
@@ -69,7 +69,8 @@ function s()
 			for i=0,31 do D[i]={}end
 			d=1
 		elseif(o==238)then --0xEE (RET)
-			P=S[#S] S[#S]=N
+			P=S[#S]
+			S[#S]=N
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
 		S[#S+1]=(l>1)and(P)or(N) --If 2nnn (CALL)
@@ -120,7 +121,7 @@ function s()
 		end
 	elseif(l<Q) then --if 0xN000 is E
 		if(H==158 or H==161)then --0x9e or 0xa1
-			P=P+(b(K[R[X]])~b(H==161))*2
+			P=P+(b(K[R[X]])~b(H>160))*2
 		end
 	end
 	P=P&4095
