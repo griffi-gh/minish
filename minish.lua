@@ -59,16 +59,16 @@ function b(v)return(v and 1 or 0)end
 --MAIN LOOP
 function s()
 	C=m.max(C-1,0)
-	u=M[P]or 0
-	o=(M[P+1]or 0)|(u<<8) --fetch
+	u=(M[P]or 0)
+	o=(M[P+1]or 0)|u<<8 --fetch
 	--print(string.format("OP: %04X",o),string.format("PC: %03X",P)) --uncomment for basic debug
-	X=(u&Q)    	  --0x0F00 >>
-	l=(u&j)>>4    --0xF000 >>
-	Y=(o&j)>>4       --0x00F0 >>
-	h=o&Q 			  --0x000F
-	r=o&4095 	     --0x0FFF
-	H=o&E 			  --0x00FF
-	P=P+2 			  --next instr
+	X=(u&Q)    	  --0x0F00
+	l=(u&j)>>4    --0xF000
+	Y=(o&j)>>4    --0x00F0
+	h=o&Q 		  --0x000F
+	r=o&4095 	  --0x0FFF
+	H=o&E 		  --0x00FF
+	P=P+2     	  --next instr
 	x=R[X]
 	y=R[Y]
 	if(l<1)then -- if 0xN000 is 0
