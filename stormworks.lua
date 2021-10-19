@@ -4,6 +4,8 @@ do
 	local sc = screen
 	function onDraw()
 		if(d)then
+			sc.setColor(0,0,0)
+			sc.drawClear()
 			for i=1,32 do
 				for g=1,64 do
 					local c = D[i-1][g-1] and 255 or 0
