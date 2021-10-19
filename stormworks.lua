@@ -14,8 +14,10 @@ do
 			d=N
 		end
 	end
-	onTick = s
-	for i=1,#rom do
-		M[i+512]=rom[i]
+	onTick = function()
+		for i=1,#rom do
+			M[i+512]=rom[i]
+		end
+		onTick = s
 	end
 end

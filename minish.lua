@@ -109,7 +109,7 @@ function s()
 	elseif(l<14)then --if 0xN000 is D (DRW Vx,Vy,nibble)
 		x=R[X]y=R[Y]d,F=1,0
 		for i=0,h-1 do
-			q = M[I+i]
+			q = M[I+i]or 0
 			for g=0,7 do
 				if(q&(W>>g)>0)then
 					z,Z=x+g,y+i
