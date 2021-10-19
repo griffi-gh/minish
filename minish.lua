@@ -30,6 +30,7 @@ ________________________________________
 -- S - STACK
 -- D - DISPLAY
 -- o - Current instr
+-- r - OP & 0x0FFF
 -- l - OP & 0xF000
 -- X - OP & 0x0F00
 -- Y - OP & 0x00F0
@@ -59,11 +60,12 @@ function s()
 	o=(M[P+1]or 0)|(M[P]or 0)<<8 --fetch
 	--print(string.format("OP: %04X",o),string.format("PC: %03X",P)) --uncomment for basic debug
 	P=P+2 --next instr
-	l=(o&0xF000)>>12 --0xF000
-	X=(o&3840)>>8    --0x0F00
-	Y=(o&j)>>4       --0x00F0
+	l=(o&0xF000)>>12 --0xF000 >>
+	X=(o&3840)>>8    --0x0F00 >>
+	Y=(o&j)>>4       --0x00F0 >>
 	h=o&Q 			  --0x000F
-	H=h|Y 			  --0x00FF
+	H=o&E 			  --0x00FF
+	r=H|(o&3840)	  --0x0FFF
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
 			for i=0,31 do D[i]={}end
@@ -101,9 +103,9 @@ function s()
 		end
 		R[X]=q&E
 	elseif(l<11)then --if 0xN000 is A
-		I=H|X
+		I=r
 	elseif(l<12)then --if 0xN000 is B
-		P=H|X+R[0]
+		P=r+R[0]
 	elseif(l<13)then --if 0XN000 is C
 		R[X]=m.random(0,H)
 	elseif(l<14)then --if 0xN000 is D (DRW Vx,Vy,nibble)
