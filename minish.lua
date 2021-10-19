@@ -50,7 +50,7 @@ function b(v)return(v and 1 or 0)end
 
 --MAIN LOOP
 function s()
-	o=M[P]or 0|(M[P+1]or 0 << 8) --fetch
+	o=(M[P+1]or 0)|(M[P]or 0)<<8 --fetch
 	--print(o,P) --uncomment for debug
 	P=P+2 --next instr
 	l=(o&0xF000)>>12 --0xF000
