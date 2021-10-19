@@ -13,6 +13,8 @@ ________________________________________
 ]]--
 
 -- VARIABLES
+-- Q - const 0xF
+-- E - const 0xFF
 -- K - keyboard
 -- U - FONT
 -- F - FLAG
@@ -23,11 +25,11 @@ ________________________________________
 -- S - STACK
 -- D - DISPLAY
 -- o - Current instr
--- l - 0xF000
--- X - 0x0F00
--- Y - 0x00F0
--- H - 0x00FF
--- h - 0x000F
+-- l - OP & 0xF000
+-- X - OP & 0x0F00
+-- Y - OP & 0x00F0
+-- H - OP & 0x00FF
+-- h - OP & 0x000F
 -- m - math lib
 -- N - nil/false
 -- b - converts bool to num
@@ -35,11 +37,10 @@ ________________________________________
 -- d - draw flag
 -- q,t,_,z,Z,x,y - temporary
 
-m=math
+m,P,I,F,R,M,S,K,U=math,512,0,0,{},{},{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
 m.randomseed(7) --comment out if not needed
-
-P,I,F,R,M,S,K,U=512,0,0,{},{},{},{},{240,144,144,144,240,32,96,32,32,112,240,16,240,128,240,240,16,240,16,240,144,144,240,16,16,240,128,240,16,240,240,128,240,144,240,240,16,32,64,64,240,144,240,144,240,240,144,240,16,240,240,144,240,144,144,224,144,224,144,224,240,128,128,128,240,224,144,144,144,224,240,128,240,128,240,240,128,240,128,128}
-for i=0,15 do R[i]=0 end --init registers
+Q,E=15,255
+for i=0,Q do R[i]=0 end --init registers
 --memory is left uninited
 
 --DISPLAY
@@ -56,7 +57,7 @@ function s()
 	l=(o&0xF000)>>12 --0xF000
 	X=(o&3840)>>8    --0x0F00
 	Y=(o&240)>>4     --0x00F0
-	h=o&15 			  --0x000F
+	h=o&Q 			  --0x000F
 	H=h|Y 			  --0x00FF
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
@@ -66,34 +67,33 @@ function s()
 			P=S[#S] S[#S]=N
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
-		if(l>1)then S[#S+1]=P end --If 2nnn (CALL)
-		S[#S+1]=(l>1)and(P)or(N)
+		S[#S+1]=(l>1)and(P)or(N) --If 2nnn (CALL)
 		P=o --opcode & 0xFFF
 		--will be &0xFFF'd later
 	elseif(l<5) then --IF 0xN000 is 3 or 4
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
-		P=P+b(l>3 and R[X]~=H or R[X]==H)*2
+		P=P+(l>3 and b(R[X]~=H) or b(R[X]==H))*2
 	elseif(l<6 or l==9)then -- 5xxk (SE Vx,Vy) 9xxk (SNE Vx,Vy)
 		q,t=R[X],R[Y]
-		P=P+b(l>8 and q~=t or q==t)*2
+		P=P+(l>8 and b(q~=t) or b(q==t))*2
 	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
 		R[X]=H
 	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
-		R[X]=(R[X]+H)&255
+		R[X]=(R[X]+H)&E
 	elseif(l<9)then --if 0xN000 is 8
 		q=R[X]t=R[Y]
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
 			q=(h<1 and t or (h<2 and(q|t)or(h<3 and(q&t)or(q~t))))
 		elseif(h<6 or h==7)then --ADD Vx,Vy; SUB Vx,Vy; SUBN Vx,Vy
 			q=h>4 and (h>6 and t-q or q-t) or q+t
-			F=(h>4 and b(q>=0) or b(q>255))
+			F=(h>4 and b(q>=0) or b(q>E))
 		elseif(h<7)then --SHR Vx
 			F,q=q&1>0,q>>1
 		elseif(h==14)then --0xE SHL Vx
 			F,q=q&128>0,q<<1
 		end
-		R[X]=q&255
+		R[X]=q&E
 	elseif(l<11)then --if 0xN000 is A
 		I=H|X
 	elseif(l<12)then --if 0xN000 is B
@@ -113,7 +113,7 @@ function s()
 				end
 			end
 		end
-	elseif(l<15) then --if 0xN000 is E
+	elseif(l<Q) then --if 0xN000 is E
 		if(H==158 or H==161)then --0x9e or 0xa1
 			P=P+(b(K[R[X]])~b(H==161))*2
 		end
