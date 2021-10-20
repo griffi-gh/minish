@@ -43,6 +43,8 @@ readline.question('\nSelect template ('+getItems('templates','lua').join(', ')+'
 		  	[num,char] = v.split(':');
 		  	constants[parseInt(num.trim())] = char.trim();
 		  });
+	  } else {
+	  	target = target.replace('--[[NOICONST]]','');
 	  }
 
 		//get rom str
