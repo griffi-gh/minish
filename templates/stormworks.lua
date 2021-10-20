@@ -2,13 +2,11 @@
 m.randomseed(7)
 B=screen
 onDraw=function()
-	if(d)then
-		for i=0,31 do
-			for g=0,63 do
-				n=E*b(D[i][g])
-				B.setColor(n,n,n)
+	B.setColor(E,E,E)
+	for i=0,31 do
+		for g=0,63 do
+			if D[i][g] then
 				B.drawRectF(g,i,1,1)
-				d=N
 			end
 		end
 	end

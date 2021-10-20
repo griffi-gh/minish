@@ -42,6 +42,7 @@
 -- m - math lib
 -- N - nil/false
 -- b - converts bool to num
+-- p - selects a or b
 -- s - main loop
 -- d - draw flag
 -- q,u,t,_,z,Z,i,g - temporary
@@ -54,8 +55,9 @@ for i=0,Q do R[i]=0 end --init registers
 --DISPLAY
 D={}for i=0,31 do D[i]={}end
 
+function p(v,a,b)return(v and a or b)end
 --converts bool to num
-function b(v)return(v and 1 or 0)end
+function b(v)return p(v,1,0)end
 
 --MAIN LOOP
 function s()
@@ -81,23 +83,24 @@ function s()
 			S[#S]=N
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
-		S[#S+1]=(l>1)and(P)or(N) --If 2nnn (CALL)
+		S[#S+1]=p(l>1,P,N) --If 2nnn (CALL)
 		P=o --opcode & 0xFFF
 		--will be &0xFFF'd later
-	elseif(l<5)then --IF 0xN000 is 3 or 4
+	elseif(l<6 or l==9)then --IF 0xN000 is 3 or 4, 5 or 9
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
-		P=P+(l>3 and b(x~=H) or b(x==H))*2
-	elseif(l<6 or l==9)then -- 5xxk (SE Vx,Vy) 9xxk (SNE Vx,Vy)
-		P=P+(l>8 and b(x~=y) or b(x==y))*2
+		--5xyk (SE Vx,Vy)
+		--9xyk (SNE Vx,Vy)
+		q=p(l>4,y,H)
+		P=P+2*p(l%2==0 or l>5,b(x~=q),b(x==q))
 	elseif(l<8)then --if 0xN000 is 6 (LD Vx,byte) or 7 (ADD Vx,byte)
-		R[X]=(b(l>6)x+H)&E
+		R[X]=E&(b(l>6)*x+H)
 	elseif(l<9)then --if 0xN000 is 8
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
-			x=(h<1 and y or (h<2 and(x|y)or(h<3 and(x&y)or(x~y))))
+			x=p(h<1,y,p(h<2,x|y,p(h<3,x&y,x~y)))
 		elseif(h<6 or h==7)then --ADD Vx,Vy; SUB Vx,Vy; SUBN Vx,Vy
-			x=h>4 and (h>6 and y-x or x-y) or x+y
-			F=h>4 and b(x>=0) or b(x>E)
+			x=p(h>4,p(h>6,y-x,x-y),x+y)
+			F=p(h>4,b(x>=0),b(x>E))
 		elseif(h<7)then --SHR Vx
 			F=x&1>0 x=x>>1
 		elseif(h==14)then --0xE SHL Vx
