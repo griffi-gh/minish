@@ -128,7 +128,8 @@ function s()
 		end
 	elseif(l<Q)then --if 0xN000 is E
 		--Handle SKP and SKNP
-		P=P+(b(K[x])~b(H>160))*2*b(H==158 or H==161)
+		--Handles invalid opcodes inaccurately
+		P=P+(b(K[x])~b(H>160))*2
 	else --if 0xN000 is F
 		if(H==7)then --07
 			R[X]=C
@@ -138,15 +139,20 @@ function s()
 			--ADD I,Vx and
 			--LD F,Vx
 			I=p(H>V,5*x,I+x)
-		elseif(H==85)then --$55
-			for i=0,x do M[I+i]=R[i]end
-		elseif(H==101)then --$65
-			for i=0,x do R[i]=M[I+i]end
 		elseif(H==51) then --$33
+			--BCD
 			q=m.floor
 			M[I]=q(x/100)
 			M[I+1]=q(x/10)%10
 			M[I+2]=x%10
+		else
+			for i=0,x do
+				if(H==85)then --$55
+					M[I+i]=R[i]
+				elseif(H==101)then --$65
+					R[i]=M[I+i]
+				end
+			end
 		end
 	end
 	P=P&f
