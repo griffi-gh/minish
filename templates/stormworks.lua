@@ -4,7 +4,7 @@ onDraw=function()
 	if(d)then
 		for i=0,31 do
 			for g=0,63 do
-				n=255*b(D[i][g])
+				n=E*b(D[i][g])
 				B.setColor(n,n,n)
 				B.drawRectF(g,i,1,1)
 				d=N

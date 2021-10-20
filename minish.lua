@@ -146,4 +146,4 @@ function s()
 end
 
 --Data to be used by packer to optimize ROMs
---CONSTANTS;0xF:Q,0xFF:E,0x80:W,144:J,240:j,32:V,16:w,224:U,64:k
+--CONSTANTS;0xF:Q,0xFF:E,0x80:W,144:J,240:j,32:V,16:w,224:U,64:k,4095:f
