@@ -134,12 +134,19 @@ function s()
 			R[X]=C
 		elseif(H==21)then --$0A
 			C=x
-		elseif(H==30)then --$1E
+		elseif(H==30 or H==41)then --$1E and $29
 			--ADD I,Vx and
-			I=I+x
-		elseif(H==41)then --$29
 			--LD F,Vx
-			I=x*5
+			I=p(H>V,5*x,I+x)
+		elseif(H==85)then --$55
+			for i=0,x do M[I+i]=R[i]end
+		elseif(H==101)then --$65
+			for i=0,x do R[i]=M[I+i]end
+		elseif(H==51) then --$33
+			q=m.floor
+			M[I]=q(x/100)
+			M[I+1]=q(x/10)%10
+			M[I+2]=x%10
 		end
 	end
 	P=P&f
