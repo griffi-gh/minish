@@ -36,12 +36,14 @@ readline.question('\nSelect template ('+getItems('templates','lua').join(', ')+'
 	  let target = fs.readFileSync('./templates/'+template+'.lua','utf8');
 
 	  let constants = [];
-	  let _meta = core.substring(core.indexOf(METASTR),core.length);
-	  _meta = _meta.replace(METASTR,'').split(',');
-	  _meta.forEach((v,i,a)=>{
-	  	[num,char] = v.split(':');
-	  	constants[parseInt(num.trim())] = char.trim();
-	  });
+	  if(target.indexOf('--[[NOICONST]]') < 0){
+	  	let _meta = core.substring(core.indexOf(METASTR),core.length);
+		  _meta = _meta.replace(METASTR,'').split(',');
+		  _meta.forEach((v,i,a)=>{
+		  	[num,char] = v.split(':');
+		  	constants[parseInt(num.trim())] = char.trim();
+		  });
+	  }
 
 		//get rom str
 		let rom = '';
