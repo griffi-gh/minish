@@ -19,6 +19,7 @@
 -- V - const 32
 -- w - const 16
 -- U - const 224
+-- k - const 64
 -- K - keyboard
 -- F - FLAG
 -- R - V0-15
@@ -43,8 +44,9 @@
 -- s - main loop
 -- d - draw flag
 -- q,u,t,_,z,Z,i,g - temporary
-W,J,V,j,w,Q,E,U=128,144,32,240,16,15,255,224
-m,C,P,I,F,R,S,K,M=math,0,512,0,0,{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,64,64,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,U,J,U,J,U,j,W,W,W,j,U,J,J,J,U,j,W,j,W,j,j,W,j,W,W}
+-- v,B,n - reserved
+W,J,V,j,w,Q,E,U,k=128,144,32,240,16,15,255,224,64
+m,C,P,I,F,R,S,K,M=math,0,512,0,0,{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,k,k,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,U,J,U,J,U,j,W,W,W,j,U,J,J,J,U,j,W,j,W,j,j,W,j,W,W}
 m.randomseed(7) --comment out if not needed
 for i=0,Q do R[i]=0 end --init registers
 --memory is left uninited except font starting at 0
@@ -142,3 +144,5 @@ function s()
 	P=P&4095
 end
 
+--Data to be used by packer to optimize ROMs
+--CONSTANTS;0xF:Q,0xFF:E,0x80:W,144:J,240:j,32:V,16:w,224:U,64:k
