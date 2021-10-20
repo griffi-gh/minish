@@ -53,7 +53,7 @@ for i=0,Q do R[i]=0 end --init registers
 --memory is left uninited except font starting at 0
 
 --DISPLAY
-D={}for i=0,31 do D[i]={}end
+D={}for i=0,V do D[i]={}end
 
 function p(v,a,b)return(v and a or b)end
 --converts bool to num
@@ -76,14 +76,14 @@ function s()
 	y=R[Y]
 	if(l<1)then -- if 0xN000 is 0
 		if(o==224)then --0x00E0 (CLS)
-			for i=0,31 do D[i]={}end
+			for i=0,V do D[i]={}end
 			d=1
 		elseif(o==238)then --0xEE (RET)
 			P=S[#S]
 			S[#S]=N
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
-		S[#S+1]=p(l>1,P,N) --If 2nnn (CALL)
+		S[#S+1]=p(l>1,P,N) --If 2nnn (CALL) push the current PC first
 		P=o --opcode & 0xFFF
 		--will be &0xFFF'd later
 	elseif(l<6 or l==9)then --IF 0xN000 is 3 or 4, 5 or 9
@@ -92,7 +92,7 @@ function s()
 		--5xyk (SE Vx,Vy)
 		--9xyk (SNE Vx,Vy)
 		q=p(l>4,y,H)
-		P=P+2*p(l%2==0 or l>5,b(x~=q),b(x==q))
+		P=P+2*p(l==4 or l>5,b(x~=q),b(x==q))
 	elseif(l<8)then --if 0xN000 is 6 (LD Vx,byte) or 7 (ADD Vx,byte)
 		R[X]=E&(b(l>6)*x+H)
 	elseif(l<9)then --if 0xN000 is 8
