@@ -146,10 +146,10 @@ function s()
 			M[I+2]=x%10
 		else
 			for i=0,x do
-				if(H>84)then --$55
-					M[I+i]=R[i]
-				elseif(H>99)then --$65 (101)
+				if(H>99)then --$65 (101)
 					R[i]=M[I+i]
+				elseif(H>84)then --$55
+					M[I+i]=R[i]
 				end
 			end
 		end
