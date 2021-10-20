@@ -1,4 +1,5 @@
 --[[MINISH]]
+m.randomseed(7)
 B=screen
 onDraw=function()
 	if(d)then

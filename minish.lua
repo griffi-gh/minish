@@ -48,7 +48,6 @@
 -- v,B,n,(o,u used temporarily) - reserved
 W,J,V,j,w,Q,E,U,k,f=128,144,32,240,16,15,255,224,64,4095
 m,C,P,I,F,R,S,K,M=math,0,512,0,0,{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,k,k,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,U,J,U,J,U,j,W,W,W,j,U,J,J,J,U,j,W,j,W,j,j,W,j,W,W}
-m.randomseed(7) --comment out if not needed
 for i=0,Q do R[i]=0 end --init registers
 --memory is left uninited except font starting at 0
 
@@ -91,10 +90,8 @@ function s()
 		P=P+(l>3 and b(x~=H) or b(x==H))*2
 	elseif(l<6 or l==9)then -- 5xxk (SE Vx,Vy) 9xxk (SNE Vx,Vy)
 		P=P+(l>8 and b(x~=y) or b(x==y))*2
-	elseif(l<7)then --if 0xN000 is 6 (LD Vx,byte)
-		R[X]=H
-	elseif(l<8)then --if 0xN000 is 7 (ADD Vx,byte)
-		R[X]=(x+H)&E
+	elseif(l<8)then --if 0xN000 is 6 (LD Vx,byte) or 7 (ADD Vx,byte)
+		R[X]=(b(l>6)x+H)&E
 	elseif(l<9)then --if 0xN000 is 8
 		if(h<4)then --LD Vx,Vy; OR Vx,Vy; AND Vx,Vy; XOR Vx,Vy;
 			x=(h<1 and y or (h<2 and(x|y)or(h<3 and(x&y)or(x~y))))
