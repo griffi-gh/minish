@@ -118,7 +118,7 @@ function s()
 			q=M[I+i]or 0
 			for g=0,7 do
 				if(q&(W>>g)>0)then
-					z,Z=x+g,y+i
+					z,Z=(x+g)%64,(y+i)%32
 					_=D[Z][z]
 					F=F|b(_)
 					D[Z][z]=not(_)
@@ -137,7 +137,7 @@ function s()
 		elseif(H<31 or H==41)then --$1E and $29
 			--ADD I,Vx and
 			--LD F,Vx
-			I=p(H>V,5*x,I+x)
+			I=p(H>V,1+5*x,I+x)
 		elseif(H<52) then --$33
 			--BCD
 			q=m.floor
@@ -147,7 +147,7 @@ function s()
 		else
 			for i=0,x do
 				if(H>99)then --$65 (101)
-					R[i]=M[I+i]
+					R[i]=M[I+i]or 0
 				else --$55
 					M[I+i]=R[i]
 				end
