@@ -75,17 +75,16 @@ function s()
 	x=R[X]
 	y=R[Y]
 	if(l<1)then -- if 0xN000 is 0
-		if(o==224)then --0x00E0 (CLS)
-			for i=0,V do D[i]={}end
-			d=1
-		elseif(o==238)then --0xEE (RET)
+		if(h>0)then --0x00EE (RET)
 			P=S[#S]
 			S[#S]=N
+		else --0x00E0 (CLS)
+			for i=0,V do D[i]={}end
+			d=1
 		end
 	elseif(l<3)then  -- 0xN000 is 1 or 2
 		S[#S+1]=p(l>1,P,N) --If 2nnn (CALL) push the current PC first
-		P=o --opcode & 0xFFF
-		--will be &0xFFF'd later
+		P=r --opcode & 0xFFF
 	elseif(l<6 or l==9)then --IF 0xN000 is 3 or 4, 5 or 9
 		--3xkk (SE Vx,byte)
 		--4xkk (SNE Vx,byte)
@@ -103,7 +102,7 @@ function s()
 			F=p(h>4,b(x>=0),b(x>E))
 		elseif(h<7)then --SHR Vx
 			F=x&1>0 x=x>>1
-		elseif(h==14)then --0xE SHL Vx
+		elseif(h>9)then --0xE SHL Vx (14)
 			F=x&W>0 x=x*2
 		end
 		R[X]=x&E
@@ -131,15 +130,15 @@ function s()
 		--Handles invalid opcodes inaccurately
 		P=P+(b(K[x])~b(H>160))*2
 	else --if 0xN000 is F
-		if(H==7)then --07
+		if(H<8)then --07
 			R[X]=C
-		elseif(H==21)then --$0A
+		elseif(H<22)then --$0A
 			C=x
-		elseif(H==30 or H==41)then --$1E and $29
+		elseif(H<31 or H==41)then --$1E and $29
 			--ADD I,Vx and
 			--LD F,Vx
 			I=p(H>V,5*x,I+x)
-		elseif(H==51) then --$33
+		elseif(H<52) then --$33
 			--BCD
 			q=m.floor
 			M[I]=q(x/100)
@@ -147,9 +146,9 @@ function s()
 			M[I+2]=x%10
 		else
 			for i=0,x do
-				if(H==85)then --$55
+				if(H>84)then --$55
 					M[I+i]=R[i]
-				elseif(H==101)then --$65
+				elseif(H>99)then --$65 (101)
 					R[i]=M[I+i]
 				end
 			end
