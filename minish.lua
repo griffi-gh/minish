@@ -44,7 +44,7 @@
 -- s - main loop
 -- d - draw flag
 -- q,u,t,_,z,Z,i,g - temporary
--- v,B,n - reserved
+-- v,B,n,(o,u used temporarily) - reserved
 W,J,V,j,w,Q,E,U,k=128,144,32,240,16,15,255,224,64
 m,C,P,I,F,R,S,K,M=math,0,512,0,0,{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,k,k,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,U,J,U,J,U,j,W,W,W,j,U,J,J,J,U,j,W,j,W,j,j,W,j,W,W}
 m.randomseed(7) --comment out if not needed
