@@ -20,6 +20,7 @@
 -- w - const 16
 -- U - const 224
 -- k - const 64
+-- f - const 4095
 -- K - keyboard
 -- F - FLAG
 -- R - V0-15
@@ -45,7 +46,7 @@
 -- d - draw flag
 -- q,u,t,_,z,Z,i,g - temporary
 -- v,B,n,(o,u used temporarily) - reserved
-W,J,V,j,w,Q,E,U,k=128,144,32,240,16,15,255,224,64
+W,J,V,j,w,Q,E,U,k,f=128,144,32,240,16,15,255,224,64,4095
 m,C,P,I,F,R,S,K,M=math,0,512,0,0,{},{},{},{j,J,J,J,j,V,96,V,V,112,j,w,j,W,j,j,w,j,w,j,J,J,j,w,w,j,W,j,w,j,j,W,j,J,j,j,w,V,k,k,j,J,j,J,j,j,J,j,w,j,j,J,j,J,J,U,J,U,J,U,j,W,W,W,j,U,J,J,J,U,j,W,j,W,j,j,W,j,W,W}
 m.randomseed(7) --comment out if not needed
 for i=0,Q do R[i]=0 end --init registers
@@ -60,14 +61,14 @@ function b(v)return(v and 1 or 0)end
 --MAIN LOOP
 function s()
 	C=m.max(C-1,0)
-	u=(M[P]or 0)
+	u=M[P]or 0
 	o=(M[P+1]or 0)|u<<8 --fetch
 	--print(string.format("OP: %04X",o),string.format("PC: %03X",P)) --uncomment for basic debug
 	X=(u&Q)    	  --0x0F00
 	l=(u&j)>>4    --0xF000
 	Y=(o&j)>>4    --0x00F0
 	h=o&Q 		  --0x000F
-	r=o&4095 	  --0x0FFF
+	r=o&f     	  --0x0FFF
 	H=o&E 		  --0x00FF
 	P=P+2     	  --next instr
 	x=R[X]
@@ -141,7 +142,7 @@ function s()
 			I=x*5
 		end
 	end
-	P=P&4095
+	P=P&f
 end
 
 --Data to be used by packer to optimize ROMs
