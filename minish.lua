@@ -140,10 +140,8 @@ function s()
 			I=p(H>V,1+5*x,I+x)
 		elseif(H<52) then --$33
 			--BCD
-			q=m.floor
-			M[I]=q(x/100)
-			M[I+1]=q(x/10)%10
-			M[I+2]=x%10
+			--DEBUG: print(X,x,I,x//100,(x//10)%10,x%10)
+			M[I],M[I+1],M[I+2]=x//100,(x//10)%10,x%10
 		else
 			for i=0,x do
 				if(H>99)then --$65 (101)
